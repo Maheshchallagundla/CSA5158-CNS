@@ -1,0 +1,94 @@
+#include <stdio.h>
+#include <string.h>
+
+#define SIZE 5
+
+void generateTable(char table[][5]) {
+    char alphabet[25] = "MFHI/JKUNOPQZVWXYELARGDSTBC";
+    int k = 0;
+
+    for (int i = 0; i < SIZE; i++) {
+        for (int j = 0; j < SIZE; j++) {
+            table[i][j] = alphabet[k++];
+        }
+    }
+}
+
+void prepareMessage(char message[], char prepared[]) {
+    int i, j = 0;
+
+    for (i = 0; i < strlen(message); i++) {
+        if (message[i] == ' ') {
+            continue;
+        }
+
+        if (message[i] == 'J') {
+            prepared[j++] = 'I';
+        } else {
+            prepared[j++] = toupper(message[i]);
+        }
+    }
+
+    prepared[j] = '\0';
+
+    for (i = 0; i < strlen(prepared); i += 2) {
+        if (prepared[i] == prepared[i + 1]) {
+            for (j = i + 1; j < strlen(prepared); j++) {
+                prepared[j] = prepared[j + 1];
+            }
+            prepared[i + 1] = 'X';
+        }
+    }
+
+    if (strlen(prepared) % 2 != 0) {
+        strcat(prepared, "X");
+    }
+}
+
+void encryptPlayfair(char prepared[], char table[][5], char ciphertext[]) {
+    int i, j, k, l;
+    char temp[2];
+
+    for (i = 0; i < strlen(prepared); i += 2) {
+        temp[0] = prepared[i];
+        temp[1] = prepared[i + 1];
+
+        for (j = 0; j < SIZE; j++) {
+            for (k = 0; k < SIZE; k++) {
+                if (table[j][k] == temp[0]) {
+                    for (l = 0; l < SIZE; l++) {
+                        if (table[j][l] == temp[1]) {
+                            if (k == l) {
+                                ciphertext[i] = table[(j + 1) % SIZE][k];
+                                ciphertext[i + 1] = table[(j + 1) % SIZE][l];
+                            } else {
+                                ciphertext[i] = table[j][(k + 1) % SIZE];
+                                ciphertext[i + 1] = table[j][(l + 1) % SIZE];
+                            }
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    ciphertext[strlen(prepared)] = '\0';
+}
+
+int main() {
+    char table[5][5];
+    char message[] = "Must see you over Cadogan West. Coming at once.";
+    char prepared[100];
+    char ciphertext[100];
+
+    generateTable(table);
+
+    prepareMessage(message, prepared);
+
+    encryptPlayfair(prepared, table, ciphertext);
+
+    printf("Ciphertext: %s\n", ciphertext);
+
+    return 0;
+}
