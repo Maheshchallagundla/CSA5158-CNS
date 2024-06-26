@@ -1,0 +1,52 @@
+zzawq#include <stdio.h>
+#define SIZE 26
+
+void countFrequency(char *ciphertext, int frequency[]) {
+    for (int i = 0; i < SIZE; i++) {
+        frequency[i] = 0;
+    }
+
+    for (int i = 0; i < strlen(ciphertext); i++) {
+        frequency[ciphertext[i] - 'A']++;
+    }
+}
+
+void breakAffineCipher(char *ciphertext) {
+    int frequency[SIZE];
+    countFrequency(ciphertext, frequency);
+
+    int max1 = 0, max2 = 0;
+    for (int i = 1; i < SIZE; i++) {
+        if (frequency[i] > frequency[max1]) {
+            max2 = max1;
+            max1 = i;
+        } else if (frequency[i] > frequency[max2]) {
+            max2 = i;
+        }
+    }
+
+    int a, b;
+    for (a = 1; a < SIZE; a++) {
+        if ((a * (max2 - max1)) % SIZE == 1) {
+            break;
+        }
+    }
+
+    b = (max1 - ('B' - 'A') * a) % SIZE;
+    if (b < 0) {
+        b += SIZE;
+    }
+
+    printf("The key is a = %d, b = %d\n", a, b);
+}
+
+int main() {
+    char ciphertext[100];
+
+    printf("Enter the ciphertext: ");
+    scanf("%s", ciphertext);
+
+    breakAffineCipher(ciphertext);
+
+    return 0;
+}
