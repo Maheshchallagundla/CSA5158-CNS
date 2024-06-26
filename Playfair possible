@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int main() {
+  unsigned long long possibilities = 1;
+
+  for (int i = 1; i <= 26; i++)
+    {
+    possibilities *= i;
+  }
+
+  printf("The number of possible keys for a Playfair cipher is approximately 2^%llu.\n",
+         (unsigned long long) (logl(possibilities /(5 * 5)) / logl(2)));
+
+  return 0;
+}  
