@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEY_LEN 100477723
+#define ALPHABET_SIZE 27
+
+int char_to_index(char c) {
+    if (c >= 'A' && c <= 'Z') {
+        return c - 'A';
+    } else if (c >= 'a' && c <= 'z') {
+        return c - 'a';
+    } else {
+        return -1;
+    }
+}
+
+char index_to_char(int i) {
+    if (i >= 0 && i < ALPHABET_SIZE) {
+        return i + 'A';
+    } else {
+        return '\0';
+    }
+}
+
+int main() {
+
+    char plaintext[] = "sendmoremoney";
+    int key[] = {9, 0, 1, 7, 2, 3, 15, 2, 1, 1, 14, 2, 8, 9};
+
+    int key_len = sizeof(key) / sizeof(int);
+    int plaintext_len = strlen(plaintext);
+
+    if (plaintext_len != (key_len * ALPHABET_SIZE)) {
+        printf("The key and plaintext must have the same length.\n");
+        return 1;
+    }
+
+    char ciphertext[plaintext_len];
+
+    for (int i = 0; i < plaintext_len; i++) {
+        int plaintext_index = char_to_index(plaintext[i]);
+        int key_index = key[i % key_len];
+        int ciphertext_index = (plaintext_index + key_index) % ALPHABET_SIZE;
+        ciphertext[i] = index_to_char(ciphertext_index);
+    }
+
+    printf("Ciphertext: %s\n", ciphertext);
+
+
+    char ciphertext_part_a[] = "PVWULOXAWZDQSUJHW";
+    int key_part_b[MAX_KEY_LEN];
+
+    int ciphertext_len = strlen(ciphertext_part_a);
+
+    if (ciphertext_len != (key_len * ALPHABET_SIZE)) {
+        printf("The key and ciphertext must have the same length.\n");
+        return 1;
+    }
+
+    for (int i = 0; i < ciphertext_len; i++) {
+        int ciphertext_index = char_to_index(ciphertext_part_a[i]);
+        int plaintext_index = ciphertext_index - key[i % key_len];
+        if (plaintext_index < 0) {
+            plaintext_index += ALPHABET_SIZE;
+        }
+        key_part_b[i] = plaintext_index;
+    }
+
+    printf("Key stream that decrypts the ciphertext to plain
